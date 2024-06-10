@@ -3,37 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SliceManager : MonoBehaviour
+namespace SpriteSlicer
 {
-    public Material sliceMaterial;
-
-    public static SliceManager Instance
-    {   get { return _instance; }   }
-
-    static SliceManager _instance;
-    [Range(5, 500)] public float force = 5;
-
-    void Awake()
+    public class SliceManager : MonoBehaviour
     {
-        _instance = this;
-    }
+        public Material sliceMaterial;
 
-    public void Slice(Transform _target, Vector2 _startPos, Vector2 _endPos)
-    {
-        var sliceEngine = new SliceEngine(_target, _startPos, _endPos);
+        public static SliceManager Instance
+        { get { return _instance; } }
 
-        sliceEngine.Slice();
-    }
+        static SliceManager _instance;
+        [Range(5, 500)] public float force = 5;
 
-    public void ChangeForce(bool _bool)
-    {
-        if(_bool)
+        void Awake()
         {
-            force = 50;
+            _instance = this;
         }
-        else
+
+        public void Slice(Transform _target, Vector2 _startPos, Vector2 _endPos)
         {
-            force = 5;
+            var sliceEngine = new SliceEngine(_target, _startPos, _endPos);
+
+            sliceEngine.Slice();
+        }
+
+        public void ChangeForce(bool _bool)
+        {
+            if (_bool)
+            {
+                force = 50;
+            }
+            else
+            {
+                force = 5;
+            }
         }
     }
+
 }

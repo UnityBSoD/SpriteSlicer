@@ -2,64 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Jelly : MonoBehaviour
+namespace SpriteSlicer
 {
-    public bool maxSlicesReached = false;
-
-    public List<(float,float)> parameters= new List<(float, float)>();
-    [Range(2,8)][SerializeField] int maxSliceAllowed = 4;
-
-    SpriteRenderer sr;
-
-    void Start()
+    public class Jelly : MonoBehaviour
     {
-        NullCheck();
-    }
+        public bool maxSlicesReached = false;
 
-    void NullCheck()
-    {
-        if (sr == null)
+        public List<(float, float)> parameters = new List<(float, float)>();
+        [Range(2, 8)] [SerializeField] int maxSliceAllowed = 8;
+
+        SpriteRenderer sr;
+
+        void Start()
         {
-            sr = GetComponent<SpriteRenderer>();
-            sr.material = SliceManager.Instance.sliceMaterial;
+            NullCheck();
         }
-    }
 
-    public void SetNewShaderParameters(float _degree, float _edge)
-    {
-        parameters.Add((_degree, _edge));
-        maxSlicesReached = (parameters.Count >= maxSliceAllowed) ? true : false;
-
-        UpdateShaderParameters();
-    }
-
-    void UpdateShaderParameters()
-    {
-        NullCheck();
-
-        var sliceIndex = 1;
-        foreach (var param in parameters)
+        void NullCheck()
         {
-            sr.material.SetFloat("_Degree_" + sliceIndex, param.Item1);
-            sr.material.SetFloat("_Edge_" + sliceIndex, param.Item2);
-
-            sliceIndex++;
+            if (sr == null)
+            {
+                sr = GetComponent<SpriteRenderer>();
+                sr.material = SliceManager.Instance.sliceMaterial;
+            }
         }
-        
-    }
 
-    public void InvokeEnableCollider()
-    {
-        Invoke("EnableCollider", 0.15f);
-    }
+        public void SetNewShaderParameters(float _degree, float _edge)
+        {
+            parameters.Add((_degree, _edge));
+            maxSlicesReached = (parameters.Count >= maxSliceAllowed) ? true : false;
 
-    void EnableCollider()
-    {
-        GetComponent<PolygonCollider2D>().enabled = true;
-    }
+            UpdateShaderParameters();
+        }
 
-    public void ExertForce(Vector2 dir)
-    {
-        GetComponent<Rigidbody2D>().AddForce(dir * SliceManager.Instance.force);
+        void UpdateShaderParameters()
+        {
+            NullCheck();
+
+            var sliceIndex = 1;
+            foreach (var param in parameters)
+            {
+                sr.material.SetFloat("_Degree_" + sliceIndex, param.Item1);
+                sr.material.SetFloat("_Edge_" + sliceIndex, param.Item2);
+
+                sliceIndex++;
+            }
+
+        }
+
+        public void InvokeEnableCollider()
+        {
+            Invoke("EnableCollider", 0.15f);
+        }
+
+        void EnableCollider()
+        {
+            GetComponent<PolygonCollider2D>().enabled = true;
+        }
+
+        public void ExertForce(Vector2 dir)
+        {
+            GetComponent<Rigidbody2D>().AddForce(dir * SliceManager.Instance.force);
+        }
     }
 }
+

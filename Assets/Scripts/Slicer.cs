@@ -3,103 +3,107 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class Slicer : MonoBehaviour
+namespace SpriteSlicer
 {
-    SpriteRenderer sr;
-    TrailRenderer tr;
-    Collider2D collider;
-
-    Dictionary<Transform, (Vector2, Vector2)> records = new Dictionary<Transform, (Vector2, Vector2)>();
-
-    void Start()
+    public class Slicer : MonoBehaviour
     {
-        sr = GetComponent<SpriteRenderer>();
-        tr = GetComponent<TrailRenderer>();
-        collider = GetComponent<Collider2D>();
+        SpriteRenderer sr;
+        TrailRenderer tr;
+        Collider2D collider;
 
-        Enable(false);
-    }
+        Dictionary<Transform, (Vector2, Vector2)> records = new Dictionary<Transform, (Vector2, Vector2)>();
 
-    void Enable(bool _bool)
-    {
-        sr.enabled = _bool;
-        tr.enabled = _bool;
-        collider.enabled = _bool;
-    }
+        void Start()
+        {
+            sr = GetComponent<SpriteRenderer>();
+            tr = GetComponent<TrailRenderer>();
+            collider = GetComponent<Collider2D>();
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Enable(true);
-        }
-        if (Input.GetMouseButton(0))
-        {
-            transform.position = GetMousePosition();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
             Enable(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
+        void Enable(bool _bool)
         {
-            Debug.Break();
+            sr.enabled = _bool;
+            tr.enabled = _bool;
+            collider.enabled = _bool;
         }
-    }
 
-    Vector2 GetMousePosition()
-    {
-        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    }
-
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Jelly"))
+        void Update()
         {
-            var startPos = GetMousePosition();
-            RecordTargetStart(collision.transform, startPos);
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Jelly"))
-        {
-            if(collision.GetComponent<Jelly>().maxSlicesReached)
+            if (Input.GetMouseButtonDown(0))
             {
-                return;
+                Enable(true);
             }
-            
-            var endPos = GetMousePosition();
-            RecordTargetEnd(collision.transform, endPos);
-            InformSliceManager(collision.transform);
-        }
-    }
+            if (Input.GetMouseButton(0))
+            {
+                transform.position = GetMousePosition();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                Enable(false);
+            }
 
-    void RecordTargetStart(Transform _transform, Vector2 _start)
-    {
-        if(!records.ContainsKey(_transform))
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                Debug.Break();
+            }
+        }
+
+        Vector2 GetMousePosition()
         {
-            records.Add(_transform, (_start, Vector2.zero));
+            return Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
-    }
 
-    void RecordTargetEnd(Transform _transform, Vector2 _end)
-    {
-        if (records.ContainsKey(_transform))
+        void OnTriggerEnter2D(Collider2D collision)
         {
-            var _start = records[_transform].Item1;
-            records[_transform] = (_start, _end);
+            if (collision.CompareTag("Jelly"))
+            {
+                var startPos = GetMousePosition();
+                RecordTargetStart(collision.transform, startPos);
+            }
         }
-    }
 
-    void InformSliceManager(Transform _transform)
-    {
-        var pos = records[_transform];
-        records.Remove(_transform);
+        void OnTriggerExit2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Jelly"))
+            {
+                if (collision.GetComponent<Jelly>().maxSlicesReached)
+                {
+                    return;
+                }
 
-        SliceManager.Instance.Slice(_transform, pos.Item1, pos.Item2);
+                var endPos = GetMousePosition();
+                RecordTargetEnd(collision.transform, endPos);
+                InformSliceManager(collision.transform);
+            }
+        }
+
+        void RecordTargetStart(Transform _transform, Vector2 _start)
+        {
+            if (!records.ContainsKey(_transform))
+            {
+                records.Add(_transform, (_start, Vector2.zero));
+            }
+        }
+
+        void RecordTargetEnd(Transform _transform, Vector2 _end)
+        {
+            if (records.ContainsKey(_transform))
+            {
+                var _start = records[_transform].Item1;
+                records[_transform] = (_start, _end);
+            }
+        }
+
+        void InformSliceManager(Transform _transform)
+        {
+            var pos = records[_transform];
+            records.Remove(_transform);
+
+            SliceManager.Instance.Slice(_transform, pos.Item1, pos.Item2);
+        }
+
     }
 
 }
