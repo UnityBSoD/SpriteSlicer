@@ -19,6 +19,21 @@ public class UIManager : MonoBehaviour
 
     public void ReloadScene()
     {
-        SceneManager.LoadScene("main Scene");
+        var current = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(current);
+    }
+
+    public void ChangeScene()
+    {
+        var current = SceneManager.GetActiveScene().name;
+
+        if (current == "Scene 1")
+        {
+            SceneManager.LoadScene("Scene 2");
+        }
+        else
+        {
+            SceneManager.LoadScene("Scene 1");
+        }
     }
 }

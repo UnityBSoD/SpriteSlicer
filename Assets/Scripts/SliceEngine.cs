@@ -112,6 +112,9 @@ namespace SpriteSlicer
             _startPos = rotFactor * _startPos;
             _endPos = rotFactor * _endPos;
 
+            bool splitPointsAdded1 = false;
+            bool splitPointsAdded2 = false;
+
             foreach (var point in colliderPoints)
             {
                 if (CalcDistance(_startPos, (_endPos - _startPos), point) > 0)
@@ -120,6 +123,7 @@ namespace SpriteSlicer
                     {
                         _points1.Add(_endPos);
                         _points1.Add(_startPos);
+                        splitPointsAdded1 = true;
                     }
                     _points1.Add(point);
                     dir = 1;
@@ -130,10 +134,22 @@ namespace SpriteSlicer
                     {
                         _points2.Add(_startPos);
                         _points2.Add(_endPos);
+                        splitPointsAdded2 = true;
                     }
                     _points2.Add(point);
                     dir = -1;
                 }
+            }
+
+            if(!splitPointsAdded1)
+            {
+                _points1.Add(_endPos);
+                _points1.Add(_startPos);
+            }
+            if (!splitPointsAdded2)
+            {
+                _points2.Add(_startPos);
+                _points2.Add(_endPos);
             }
 
             if (_points1.Count > 2 && _points2.Count > 2)

@@ -27,17 +27,6 @@ namespace SpriteSlicer
             sliceEngine.Slice();
         }
 
-        public void ChangeForce(bool _bool)
-        {
-            if (_bool)
-            {
-                force = 50;
-            }
-            else
-            {
-                force = 5;
-            }
-        }
     }
 
 }
